@@ -1,0 +1,33 @@
+# Terraform sensitive files
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+terraform.tfvars
+*.auto.tfvars
+.terraform/
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.p12
+secrets.yml
+credentials.yml
+
+# AWS
+.aws/
+credentials
+
+# SSH keys
+id_rsa
+id_ed25519
+*.ppk
+	
+
