@@ -1,6 +1,6 @@
 # Configure the AWS Provider
 provider "aws" {
-  region = "us-west-2"
+  region = "us-east-1"
 }
 
 #Retrieve the list of AZs in the current AWS region
@@ -121,9 +121,24 @@ resource "aws_instance" "web" {
 
   subnet_id = aws_subnet.public_subnets["public_subnet_2"].id
 
-  vpc_security_group_ids = ["sg-09a262ef59ba16382"]
+  vpc_security_group_ids = ["sg-0b34f238eb8576191"]
 
   tags = {
     "Terraform" = "<True>"
+  }
+}
+resource "aws_s3_bucket" "my-new-S3-bucket" {
+  bucket = "my-new-tf-test-bucket-bryankin"
+
+  tags = {
+    Name    = "My S3 Bucket"
+    Purpose = "Intro to Resource Blocks Lab"
+  }
+}
+
+resource "aws_s3_bucket_ownership_controls" "my_new_bucket_acl" {
+  bucket = aws_s3_bucket.my-new-S3-bucket.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
   }
 }
