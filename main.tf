@@ -121,7 +121,7 @@ resource "aws_nat_gateway" "nat_gateway" {
   }
 }
 
-resource "aws_instance" "web" {
+resource "aws_instance" "web_server" {
   ami           = "ami-0f00d706c4a80fd93"
   instance_type = "t3.micro"
 
@@ -130,7 +130,9 @@ resource "aws_instance" "web" {
   vpc_security_group_ids = ["sg-08937e04e37ae5f43"]
 
   tags = {
-    "Terraform" = "<True>"
+    Name  = local.server_name
+    Owner = local.team
+    App   = local.application
   }
 }
 resource "aws_subnet" "variables-subnet" {
