@@ -21,6 +21,7 @@ resource "aws_vpc" "vpc" {
     Name        = var.vpc_name
     Environment = "demo_environment"
     Terraform   = "true"
+    Region      = data.aws_region.current.name
   }
 }
 
@@ -127,7 +128,7 @@ resource "aws_instance" "web_server" {
 
   subnet_id = aws_subnet.public_subnets["public_subnet_2"].id
 
-  vpc_security_group_ids = ["sg-08937e04e37ae5f43"]
+  vpc_security_group_ids = ["sg-00a97d00feb630d7b"]
 
   tags = {
     Name  = local.server_name
