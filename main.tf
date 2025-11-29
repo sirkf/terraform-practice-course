@@ -1,6 +1,6 @@
 # Configure the AWS Provider
 provider "aws" {
-  region = "us-east-1"
+  region = var.aws_region
 }
 
 #Retrieve the list of AZs in the current AWS region
@@ -121,9 +121,20 @@ resource "aws_instance" "web" {
 
   subnet_id = aws_subnet.public_subnets["public_subnet_2"].id
 
-  vpc_security_group_ids = ["sg-0b34f238eb8576191"]
+  vpc_security_group_ids = ["sg-08937e04e37ae5f43"]
 
   tags = {
     "Terraform" = "<True>"
+  }
+}
+resource "aws_subnet" "variables-subnet" {
+  vpc_id                  = aws_vpc.vpc.id
+  cidr_block              = var.variables_sub_cidr
+  availability_zone       = var.variables_sub_az
+  map_public_ip_on_launch = var.variables_sub_auto_ip
+
+  tags = {
+    Name      = "sub-variables-${var.variables_sub_az}"
+    Terraform = "true"
   }
 }
