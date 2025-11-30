@@ -127,7 +127,6 @@ resource "aws_nat_gateway" "nat_gateway" {
     Name = "demo_nat_gateway"
   }
 }
-# ex
 # Terraform Data Block - Lookup Ubuntu 22.04
 data "aws_ami" "ubuntu_22_04" {
   most_recent = true
