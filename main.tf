@@ -128,7 +128,7 @@ resource "aws_nat_gateway" "nat_gateway" {
   }
 }
 # Terraform Data Block - Lookup Ubuntu 22.04
-data "aws_ami" "ubuntu_22_04" {
+data "aws_ami" "ubuntu_server" {
   most_recent = true
 
   filter {
@@ -138,6 +138,54 @@ data "aws_ami" "ubuntu_22_04" {
 
   owners = ["099720109477"]
 }
+
+resource "aws_instance" "ubuntu_server" {
+  ami                         = data.aws_ami.ubuntu_server.id
+  instance_type               = "t3.micro"
+  subnet_id                   = aws_subnet.public_subnets["public_subnet_1"].id
+  security_groups             = [aws_security_group.vpc-ping.id, aws_security_group.ingress-ssh.id, aws_security_group.vpc-web.id]
+  associate_public_ip_address = true
+  key_name                    = aws_key_pair.generated.key_name
+  connection {
+    user        = "ubuntu"
+    private_key = tls_private_key.generated.private_key_pem
+    host        = self.public_ip
+  }
+  # Leave the first part of the block unchanged and create our `local-exec` provisioner
+  provisioner "local-exec" {
+    command = "chmod 600 ${local_file.private_key_pem.filename}"
+  }
+  # remote-exec has an "inline" argument which provides a list of commmands to run on our remote resource
+  provisioner "remote-exec" {
+    inline = [
+      "sudo rm -rf /tmp",
+      "sudo git clone https://github.com/hashicorp/demo-terraform-101 /tmp",
+      "sudo sh /tmp/assets/setup-web.sh",
+    ]
+  }
+
+  /*
+  tags = {
+    Name = "Ubuntu EC2 Server"
+  }
+*/
+
+  tags = {
+    Name  = local.server_name
+    Owner = local.team
+    App   = local.application
+  }
+
+
+
+  lifecycle {
+    ignore_changes = [security_groups]
+  }
+
+}
+
+# There should be only one vm 
+/*
 resource "aws_instance" "web_server" {
   ami = data.aws_ami.ubuntu_22_04.id
 
@@ -153,6 +201,8 @@ resource "aws_instance" "web_server" {
     App   = local.application
   }
 }
+*/
+
 resource "aws_subnet" "variables-subnet" {
   vpc_id                  = aws_vpc.vpc.id
   cidr_block              = var.variables_sub_cidr
