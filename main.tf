@@ -128,7 +128,7 @@ resource "aws_nat_gateway" "nat_gateway" {
   }
 }
 # Terraform Data Block - Lookup Ubuntu 22.04
-data "aws_ami" "ubuntu_server" {
+data "aws_ami" "ubuntu" {
   most_recent = true
 
   filter {
@@ -139,8 +139,8 @@ data "aws_ami" "ubuntu_server" {
   owners = ["099720109477"]
 }
 
-resource "aws_instance" "ubuntu_server" {
-  ami                         = data.aws_ami.ubuntu_server.id
+resource "aws_instance" "ubuntu" {
+  ami                         = data.aws_ami.ubuntu.id
   instance_type               = "t3.micro"
   subnet_id                   = aws_subnet.public_subnets["public_subnet_1"].id
   security_groups             = [aws_security_group.vpc-ping.id, aws_security_group.ingress-ssh.id, aws_security_group.vpc-web.id]
@@ -299,4 +299,53 @@ resource "aws_security_group" "vpc-ping" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+}
+
+data "aws_ami" "web_server" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  }
+
+  owners = ["099720109477"]
+}
+
+# Terraform Resource Block - To Build Web Server in Public Subnet
+resource "aws_instance" "web_server" {
+  ami           = data.aws_ami.web_server.id
+  instance_type = "t3.micro"
+  subnet_id     = aws_subnet.public_subnets["public_subnet_1"].id
+  security_groups = [aws_security_group.vpc-ping.id,
+  aws_security_group.ingress-ssh.id, aws_security_group.vpc-web.id]
+  associate_public_ip_address = true
+  key_name                    = aws_key_pair.generated.key_name
+  connection {
+    user        = "ubuntu"
+    private_key = tls_private_key.generated.private_key_pem
+    host        = self.public_ip
+  }
+
+  # Leave the first part of the block unchanged and create our `local-exec` provisioner
+  provisioner "local-exec" {
+    command = "chmod 600 ${local_file.private_key_pem.filename}"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo rm -rf /tmp",
+      "sudo git clone https://github.com/hashicorp/demo-terraform-101 /tmp",
+      "sudo sh /tmp/assets/setup-web.sh",
+    ]
+  }
+
+  tags = {
+    Name = "Web EC2 Server"
+  }
+
+  lifecycle {
+    ignore_changes = [security_groups]
+  }
+
 }
