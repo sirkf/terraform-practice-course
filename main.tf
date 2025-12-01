@@ -349,3 +349,4 @@ resource "aws_instance" "web_server" {
   }
 
 }
+#used terraform apply -replace="aws_instance.web_server" to replace bad server
