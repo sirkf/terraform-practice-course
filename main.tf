@@ -350,10 +350,3 @@ resource "aws_instance" "web_server" {
 
 }
 #used terraform apply -replace="aws_instance.web_server" to replace bad server
-
-resource "aws_instance" "aws_linux" {
-
-  instance_type = "t3.micro"
-  ami           = "ami-0fa3fe0fa7920f68e"
-
-}
