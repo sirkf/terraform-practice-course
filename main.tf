@@ -416,7 +416,10 @@ module "autoscaling" {
   }
 
 }
-output "asg_group_size" {
-  value = module.autoscaling.autoscaling_group_max_size
-
+#output "asg_group_size" {
+#  value = module.autoscaling.autoscaling_group_max_size
+#}
+output "autoscaling_group_max_size" {
+  description = "The maximum size of the autoscale group"
+  value       = try(aws_autoscaling_group.this[0].max_size, "")
 }
