@@ -42,6 +42,5 @@ output "phone_number" {
 }
 
 output "my_number" {
-  value     = local.my_number
-  sensitive = true
+  value = local.my_number
 }
