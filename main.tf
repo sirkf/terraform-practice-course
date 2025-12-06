@@ -419,3 +419,9 @@ module "autoscaling" {
 output "asg_group_size" {
   value = module.autoscaling.autoscaling_group_max_size
 }
+module "s3_bucket" {
+  source = "terraform-aws-modules/s3-bucket/aws"
+
+  bucket = "-s3-bucket-21"
+  acl    = "private"
+}
