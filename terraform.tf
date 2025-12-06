@@ -1,12 +1,14 @@
 terraform {
-  backend "remote" {
-    hostname     = "app.terraform.io"
-    organization = "KFProject"
+  backend "s3" {
+    bucket = "my-terraform-state-ghmeren"
+    key    = "prod/aws_infra"
+    region = "us-east-1"
 
-    workspaces {
-      name = "my-aws-app"
-    }
+    dynamodb_table = "terraform-locks"
+    encrypt        = true
   }
+
+
   required_version = ">= 1.0.0"
   required_providers {
     aws = {
