@@ -13,6 +13,9 @@ provider "aws" {
 data "aws_availability_zones" "available" {}
 data "aws_region" "current" {}
 
+data "aws_s3_bucket" "data_bucket" {
+  bucket = "my-data-lookup-bucket-bkeren"
+}
 #start of locals block
 locals {
   team        = "api_mgmt_dev"
