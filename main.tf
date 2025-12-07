@@ -168,9 +168,11 @@ resource "aws_instance" "ubuntu" {
     host        = self.public_ip
   }
   # Leave the first part of the block unchanged and create our `local-exec` provisioner
+  /*
   provisioner "local-exec" {
     command = "chmod 600 ${local_file.private_key_pem.filename}"
   }
+  */
   # remote-exec has an "inline" argument which provides a list of commmands to run on our remote resource
   provisioner "remote-exec" {
     inline = [
@@ -234,10 +236,11 @@ resource "tls_private_key" "generated" {
   algorithm = "RSA"
 }
 
-resource "local_file" "private_key_pem" {
+/*resource "local_file" "private_key_pem" {
   content  = tls_private_key.generated.private_key_pem
   filename = "MyAWSKey.pem"
 }
+*/
 resource "aws_key_pair" "generated" {
   key_name   = "MyAWSKey"
   public_key = tls_private_key.generated.public_key_openssh
@@ -344,9 +347,10 @@ resource "aws_instance" "web_server" {
   }
 
   # Leave the first part of the block unchanged and create our `local-exec` provisioner
-  provisioner "local-exec" {
+  /*  provisioner "local-exec" {
     command = "chmod 600 ${local_file.private_key_pem.filename}"
   }
+*/
 
   provisioner "remote-exec" {
     inline = [
