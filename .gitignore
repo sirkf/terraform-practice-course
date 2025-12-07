@@ -31,5 +31,5 @@ id_ed25519
 *.ppk
 	
 # my random files 
-vaults.tf
+vault.tf
 
