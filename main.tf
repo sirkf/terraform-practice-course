@@ -376,3 +376,8 @@ resource "aws_instance" "web_server_2" {
     Name = "Web EC2 Server 2"
   }
 }
+resource "aws_subnet" "list_subnet" {
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = var.ip[var.environment]
+  availability_zone = var.us-east-1-azs[0]
+}
